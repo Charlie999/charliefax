@@ -1,0 +1,37 @@
+diff --git a/modem/modem_debug.c b/modem/modem_debug.c
+index ea2bb2f..6b1009e 100644
+--- a/modem/modem_debug.c
++++ b/modem/modem_debug.c
+@@ -69,6 +69,9 @@ static int modem_log_fd;
+ 
+ int modem_debug_log_data(struct modem *m, unsigned id, const void *data, int count)
+ {
++	#ifndef CONFIG_DEBUG_MODEM
++	return 0;
++	#endif
+ 	struct sllog_header hdr;
+ 	int ret = 0;
+ 	if(id <= modem_debug_logging && modem_log_fd > 0) {
+diff --git a/modem/modem_debug.h b/modem/modem_debug.h
+index 279da63..f0080de 100644
+--- a/modem/modem_debug.h
++++ b/modem/modem_debug.h
+@@ -86,16 +86,15 @@ extern int modem_debug_printf(const char *fmt,...)
+ #define eprintf(args...) { modem_debug_printf("err: " args) ; }
+ #define dprintf(args...) { modem_debug_printf(args) ; }
+ 
+-extern int modem_debug_log_data(struct modem *m, unsigned id, const void *, int);
+-
+ #else /* not CONFIG_DEBUG_MODEM */
+ 
+ #define eprintf(fmt...)
+ #define dprintf(fmt...)
+-#define modem_debug_log_data(m,id,data,cnt)
+ 
+ #endif /* not CONFIG_DEBUG_MODEM */
+ 
++extern int modem_debug_log_data(struct modem *m, unsigned id, const void *, int);
++
+ extern int  modem_debug_init(const char *suffix);
+ extern void modem_debug_exit();
+ 
