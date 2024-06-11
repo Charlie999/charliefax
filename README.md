@@ -47,6 +47,6 @@ agi.set_variable("UUID", str(uuid.UUID(int=int.from_bytes(hash, 'big'))) )
 
 big TODOs:
 - create RX spooler/handler (go thru inbound directory and handle as appropriate) [integrate into main program?]
-- remove image conversion dependency (speaking of, I should probably perhaps integrate efax?)
-- make CMakeLists detect whether -m32 is usable or not
+- ~~remove image conversion dependency (speaking of, I should probably perhaps integrate efax?)~~
+- ~~make CMakeLists detect whether -m32 is usable or not~~
 - *try and remove the dsplibs.o dependency and get 64-bit code??*
