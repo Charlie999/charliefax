@@ -474,7 +474,7 @@ int charliefax_modem(const int in_fd, const int out_fd, const char* tdir, sig_at
 	if (efax_pid == 0) {
 		mkdir(tdir, S_IWUSR | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); // mode 755
 		chdir(tdir);
-		if (execl(config_efax, config_efax, "-d", ma->modem->pty_name, "-l", csid,"-r","fax", NULL) < 0) {
+		if (execl(config_efax, config_efax, "-o","1","-d", ma->modem->pty_name, "-l", csid,"-r","fax", NULL) < 0) {
 			perror("execl()");
 			ipc[0] = 0;
 			charliefax_modem_free(ma);
