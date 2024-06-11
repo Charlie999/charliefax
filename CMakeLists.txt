@@ -2,7 +2,20 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 project(charliefax)
 
-set(CMAKE_C_COMPILER i686-linux-gnu-gcc)
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message("On a 64-bit system. Using -m32")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+ENDIF()
+
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+
+find_program(686_GCC "i686-linux-gnu-gcc")
+IF(686_GCC)
+    message("Using i686-linux-gnu-gcc")
+    set(CMAKE_C_COMPILER i686-linux-gnu-gcc)
+ENDIF()
 
 include(FetchContent)
 
@@ -34,8 +47,13 @@ add_library(modem SHARED
     ${pkg-sl-modem_SOURCE_DIR}/modem/sysdep_common.c
     ${pkg-sl-modem_SOURCE_DIR}/modem/dsplibs.o
 )
+
 target_include_directories(modem PUBLIC ${pkg-sl-modem_SOURCE_DIR}/modem)
+
+add_library(image-converter STATIC src/image-converter.c)
+target_link_libraries(image-converter tiff png)
 
 add_executable(charliefax src/charliefax.c)
 target_include_directories(charliefax PUBLIC ${pkg-sl-modem_SOURCE_DIR}/modem)
-target_link_libraries(charliefax PRIVATE modem pq uuid)
+target_link_libraries(charliefax PRIVATE modem image-converter pq uuid)
+

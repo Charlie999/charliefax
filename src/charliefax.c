@@ -64,6 +64,7 @@
 #include <modem_debug.h>
 
 #include "asterisk/audiosocket.h"
+#include "image-converter.h"
 
 #define INFO(fmt,args...) fprintf(stderr, fmt , ##args );
 #define ERR(fmt,args...) fprintf(stderr, "error: " fmt , ##args );
@@ -910,11 +911,8 @@ noerr_exit:
 					printf("-> converting %s\n", filename_qfd);
 					if (rename(filename_qfd, filename_tiff_rename) < 0) perror("rename()");
 
-					// this is awful but it's 11pm and i'm done for the day!
-					// TODO: integrate this
-					asprintf(&cmdline, "convert %s %s", filename_tiff_rename, filename_png_rename);
-					system(cmdline);
-					free(cmdline);
+					if (convert_image_tiff_png(filename_tiff_rename, filename_png_rename))
+						fprintf(stderr, "Error converting %s\n", filename_qfd);
 				}
 
 				free(filename_qfd);
