@@ -30,7 +30,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(pkg-sl-modem)
 
-add_library(modem SHARED
+add_library(modem STATIC
     ${pkg-sl-modem_SOURCE_DIR}/modem/modem.c
     ${pkg-sl-modem_SOURCE_DIR}/modem/modem_datafile.c
     ${pkg-sl-modem_SOURCE_DIR}/modem/modem_at.c
@@ -56,4 +56,6 @@ target_link_libraries(image-converter tiff png)
 add_executable(charliefax src/charliefax.c)
 target_include_directories(charliefax PUBLIC ${pkg-sl-modem_SOURCE_DIR}/modem)
 target_link_libraries(charliefax PRIVATE modem image-converter pq uuid)
+set_target_properties(charliefax PROPERTIES COMPILE_FLAGS "-fstack-protector")
+set_target_properties(charliefax PROPERTIES LINK_FLAGS "-fPIE -no-pie -z noexecstack -z relro -z now")
 

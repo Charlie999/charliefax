@@ -893,6 +893,7 @@ noerr_exit:
 		char *filename_tiff_rename;
 		char *filename_png_rename;
 		char *cmdline;
+		int conv_errors = 0;
 		if ((fax_dfd = opendir(fax_tdir)) != NULL) {
 			printf("converting fax data...\n");
 			while ((dp = readdir(fax_dfd)) != NULL) {
@@ -911,8 +912,10 @@ noerr_exit:
 					printf("-> converting %s\n", filename_qfd);
 					if (rename(filename_qfd, filename_tiff_rename) < 0) perror("rename()");
 
-					if (convert_image_tiff_png(filename_tiff_rename, filename_png_rename))
+					if (convert_image_tiff_png(filename_tiff_rename, filename_png_rename)) {
 						fprintf(stderr, "Error converting %s\n", filename_qfd);
+						conv_errors++;
+					}
 				}
 
 				free(filename_qfd);
@@ -949,9 +952,9 @@ noerr_exit:
 				} else {
 					char* meta;
 					char* meta_fname;
-					if (asprintf(&meta, "UUID=%s\nCALLERID=%s\nSRC=%s\nDEST=%s\nTIMESTAMP=%s\nDURATION=%s\nPROCESSED=0\n", uuid,
+					if (asprintf(&meta, "UUID=%s\nCALLERID=%s\nSRC=%s\nDEST=%s\nTIMESTAMP=%s\nDURATION=%s\nPROCESSED=0\nCONVERRORS=%d\n", uuid,
 							PQgetvalue(res, 0, field_clid), PQgetvalue(res, 0, field_src), PQgetvalue(res, 0, field_dst),
-							PQgetvalue(res, 0, field_timestamp), PQgetvalue(res, 0, field_duration)) < 0 
+							PQgetvalue(res, 0, field_timestamp), PQgetvalue(res, 0, field_duration), conv_errors) < 0 
 							|| asprintf(&meta_fname, "%s/_metadata", fax_tdir) < 0) {
 						perror("asprintf()");
 						ret = 1;
